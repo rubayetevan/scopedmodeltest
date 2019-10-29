@@ -20,8 +20,6 @@ class BottomNavProvider extends ChangeNotifier {
   void changePage(int index) async {
     _bottomNavModel.currentIndex = index;
     notifyListeners();
-    final employees = await repository.getAllEmployees();
-    logger.d("employee found: ${employees.length}");
   }
 
   Widget getCurrentPage() {

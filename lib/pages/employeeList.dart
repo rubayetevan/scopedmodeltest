@@ -4,11 +4,8 @@ import 'package:scopedmodeltest/providers/employeeProvider.dart';
 
 class EmployeeListPage extends StatelessWidget {
 
-
   @override
   Widget build(BuildContext context) {
-    final employeeProvider = Provider.of<EmployeeProvider>(context);
-    employeeProvider.getEmployeeList();
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -18,11 +15,11 @@ class EmployeeListPage extends StatelessWidget {
               return ListView.builder(
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text(employeeProvider.employeeList[index].employeeName),
-                    subtitle: Text(employeeProvider.employeeList[index].id),
+                    title: Text(employeeProvider.employeeList()[index].employeeName),
+                    subtitle: Text(employeeProvider.employeeList()[index].id),
                   );
                 },
-                itemCount:employeeProvider.employeeList.length,
+                itemCount:employeeProvider.employeeList().length,
               );
             },
 

@@ -4,13 +4,19 @@ import 'package:scopedmodeltest/repository/repository.dart';
 
 class EmployeeProvider extends ChangeNotifier{
 
-  List<EmployeeModel> employeeList=[];
+  List<EmployeeModel> _employeeList=[];
 
 
-  void getEmployeeList()async{
-    employeeList = await repository.getAllEmployees();
+  Future<void> loadEmployeeList()async{
+    _employeeList= await repository.getAllEmployees() ;
     notifyListeners();
   }
+
+  List<EmployeeModel> employeeList (){
+    loadEmployeeList();
+    return _employeeList;
+  }
+
 
 
 }

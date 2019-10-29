@@ -3,6 +3,8 @@ import 'package:scopedmodeltest/models/bottomNavModel.dart';
 import 'package:scopedmodeltest/pages/employeeEdit.dart';
 import 'package:scopedmodeltest/pages/employeeList.dart';
 import 'package:scopedmodeltest/pages/employeeSearch.dart';
+import 'package:scopedmodeltest/repository/repository.dart';
+import 'package:scopedmodeltest/utilities/utils.dart';
 
 class BottomNavProvider extends ChangeNotifier {
   final List<Widget> _pages = [
@@ -15,9 +17,11 @@ class BottomNavProvider extends ChangeNotifier {
 
   final _bottomNavModel = BottomNavModel();
 
-  void changePage(int index) {
+  void changePage(int index) async {
     _bottomNavModel.currentIndex = index;
     notifyListeners();
+    final employees = await repository.getAllEmployees();
+    logger.d("employee found: ${employees.length}");
   }
 
   Widget getCurrentPage() {
@@ -28,7 +32,7 @@ class BottomNavProvider extends ChangeNotifier {
     return _bottomNavModel.currentIndex;
   }
 
-  String getCurrentPageName(){
+  String getCurrentPageName() {
     return _pageNames[_bottomNavModel.currentIndex];
   }
 }

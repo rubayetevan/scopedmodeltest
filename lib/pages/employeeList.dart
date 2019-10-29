@@ -12,14 +12,18 @@ class EmployeeListPage extends StatelessWidget {
           color: Colors.amber,
           child: Consumer<EmployeeProvider>(
             builder: (context, employeeProvider, child) {
-              return ListView.builder(
+              return employeeProvider.employeeList.isEmpty?Container(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ):ListView.builder(
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text(employeeProvider.employeeList()[index].employeeName),
-                    subtitle: Text(employeeProvider.employeeList()[index].id),
+                    title: Text(employeeProvider.employeeList[index].employeeName),
+                    subtitle: Text(employeeProvider.employeeList[index].id),
                   );
                 },
-                itemCount:employeeProvider.employeeList().length,
+                itemCount:employeeProvider.employeeList.length,
               );
             },
 

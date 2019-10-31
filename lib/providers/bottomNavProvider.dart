@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scopedmodeltest/models/bottomNavModel.dart';
-import 'package:scopedmodeltest/pages/employeeEdit.dart';
+import 'package:scopedmodeltest/pages/employeeEditList.dart';
 import 'package:scopedmodeltest/pages/employeeList.dart';
 import 'package:scopedmodeltest/pages/employeeSearch.dart';
 import 'package:scopedmodeltest/repository/repository.dart';
@@ -10,7 +10,7 @@ class BottomNavProvider extends ChangeNotifier {
   final List<Widget> _pages = [
     EmployeeListPage(),
     EmployeeSearchPage(),
-    EmployeeEditPage(),
+    EmployeeEditList(),
   ];
 
   final List<String> _pageNames = ['Employees', 'Search', 'Edit'];

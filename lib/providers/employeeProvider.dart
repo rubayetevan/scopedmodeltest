@@ -1,21 +1,34 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:scopedmodeltest/models/employeeModel.dart';
+import 'package:scopedmodeltest/repository/database/database.dart';
 import 'package:scopedmodeltest/repository/repository.dart';
+import 'package:scopedmodeltest/utilities/enums.dart';
+import 'package:scopedmodeltest/utilities/routes.dart';
 import 'package:scopedmodeltest/utilities/utils.dart';
 
-class EmployeeProvider extends ChangeNotifier{
+class EmployeeProvider extends ChangeNotifier {
+  List<EmployeeModel> _employeeList = [];
+  List<EmployeeModel> _searchedList = [];
+  String _searchedKeyword = '';
+  EmployeeModel _selectedEmployee = null;
 
-  List<EmployeeModel> _employeeList=[];
+  GlobalKey _formKey = GlobalKey<FormState>();
 
-  List<EmployeeModel> _searchedList=[];
 
-  EmployeeProvider(){
+
+  EmployeeProvider() {
     _loadEmployeeList();
   }
 
-
-  void _loadEmployeeList()async{
-    employeeList= await repository.getAllEmployees() ;
+  Future<void> _loadEmployeeList() async {
+    employeeList = await repository.getAllEmployees();
+    searchEmployee(keyword: searchedKeyword);
     notifyListeners();
   }
 
@@ -25,13 +38,13 @@ class EmployeeProvider extends ChangeNotifier{
     _employeeList = value;
   }
 
-  void searchEmployee({String keyword=''}){
-    _searchedList= _employeeList.where((employee) => employee.employeeName.startsWith(keyword)).toList();
-
-    logger.d('keyword =${_searchedList[0].employeeName}');
+  void searchEmployee({String keyword = ''}) {
+    _searchedList = _employeeList
+        .where((employee) => employee.employeeName.startsWith(keyword))
+        .toList();
+    searchedKeyword = keyword;
     notifyListeners();
   }
-
 
   List<EmployeeModel> get searchedList => _searchedList;
 
@@ -39,6 +52,82 @@ class EmployeeProvider extends ChangeNotifier{
     _searchedList = value;
   }
 
+  String get searchedKeyword => _searchedKeyword;
+
+  set searchedKeyword(String value) {
+    _searchedKeyword = value;
+  }
+
+  void goToEmployeeDetails(BuildContext context, page,
+      {String id = '-1'}) async {
+    routes.pushPage(context, page);
+    selectedEmployee = await repository.getEmployeeByID(id);
+  }
+
+  EmployeeModel get selectedEmployee => _selectedEmployee;
+
+  set selectedEmployee(EmployeeModel value) {
+    _selectedEmployee = value;
+  }
+
+  GlobalKey get formKey => _formKey;
+
+  set formKey(GlobalKey value) {
+    _formKey = value;
+  }
+
+  void changeEmployeeRating(double rating, String id) async {
+    await internalDatabase.updateEmployeeRating(rating, id);
+    selectedEmployee = await repository.getEmployeeByID(id);
+    await _loadEmployeeList();
+  }
+
+  void addOrUpdateEmployee(
+      actionType, String name, String age, String salary) async {
+    if (actionType == ActionTypes.add) {
+      EmployeeModel employeeModel = EmployeeModel(
+          id: Random.secure().nextInt(9999).toString(),
+          employeeName: name,
+          employeeAge: age,
+          employeeSalary: salary,
+          rating: 0,
+          profileImage: '');
+
+      await internalDatabase.insertEmployee(employeeModel);
+    } else if (actionType == ActionTypes.edit) {
+      await internalDatabase.updateEmployee(selectedEmployee.id, name, salary,
+          age, selectedEmployee.profileImage);
+    }
+    _loadEmployeeList();
+  }
+
+  void deleteEmployee() async {
+    internalDatabase.deleteEmployee(selectedEmployee.id);
+    _loadEmployeeList();
+  }
+
+  String validateName(value){
+
+    logger.d("sfsf "+value);
+    if (value.isEmpty) {
+      return 'Please enter some text';
+    }
+    return null;
+  }
+
+  String validateAge(value){
+    if (value.isEmpty) {
+      return 'Please enter some text';
+    }
+    return null;
+  }
+
+  String validateSalary(value){
+    if (value.isEmpty) {
+      return 'Please enter some text';
+    }
+    return null;
+  }
 
 
 
@@ -46,5 +135,32 @@ class EmployeeProvider extends ChangeNotifier{
 
 
 
+  void imageSelectFromGallery() async {
+    final galleryImage = await ImagePicker.pickImage(
+      source: ImageSource.gallery,
+    );
 
+    logger.d("Selected gallery image path = ${galleryImage.path}");
+
+    File croppedFile = await ImageCropper.cropImage(
+        sourcePath: galleryImage.path,
+        aspectRatio: CropAspectRatio(ratioX: 10, ratioY: 9),
+        /*aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio16x9
+        ],*/
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        iosUiSettings: IOSUiSettings(
+          minimumAspectRatio: 1.0,
+        ));
+
+  }
 }

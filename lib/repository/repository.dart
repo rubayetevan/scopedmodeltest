@@ -8,9 +8,15 @@ class Repository {
     final dbData = await internalDatabase.allEmployee();
     if (dbData == null || dbData.isEmpty) {
       final employeeListFromAPI = await api.getEmployees();
-      await internalDatabase.insertEmployee(employeeListFromAPI);
+      await internalDatabase.insertEmployees(employeeListFromAPI);
     }
     return await internalDatabase.allEmployee();
+  }
+
+
+
+  Future<EmployeeModel> getEmployeeByID(String id){
+    return internalDatabase.getEmployeeByID(id);
   }
 }
 

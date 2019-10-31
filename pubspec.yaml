@@ -26,6 +26,9 @@ dependencies:
   provider:
   dio:
   sqflite:
+  smooth_star_rating:
+  image_picker:
+  image_cropper:
 
 dev_dependencies:
   flutter_test:

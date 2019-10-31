@@ -1,7 +1,5 @@
 import 'dart:io';
 import 'dart:math';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -18,9 +16,7 @@ class EmployeeProvider extends ChangeNotifier {
   String _searchedKeyword = '';
   EmployeeModel _selectedEmployee = null;
 
-  GlobalKey _formKey = GlobalKey<FormState>();
-
-
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   EmployeeProvider() {
     _loadEmployeeList();
@@ -70,11 +66,7 @@ class EmployeeProvider extends ChangeNotifier {
     _selectedEmployee = value;
   }
 
-  GlobalKey get formKey => _formKey;
-
-  set formKey(GlobalKey value) {
-    _formKey = value;
-  }
+  GlobalKey<FormState> get formKey => _formKey;
 
   void changeEmployeeRating(double rating, String id) async {
     await internalDatabase.updateEmployeeRating(rating, id);
@@ -82,58 +74,55 @@ class EmployeeProvider extends ChangeNotifier {
     await _loadEmployeeList();
   }
 
-  void addOrUpdateEmployee(
+  void addOrUpdateEmployee(BuildContext context,
       actionType, String name, String age, String salary) async {
-    if (actionType == ActionTypes.add) {
-      EmployeeModel employeeModel = EmployeeModel(
-          id: Random.secure().nextInt(9999).toString(),
-          employeeName: name,
-          employeeAge: age,
-          employeeSalary: salary,
-          rating: 0,
-          profileImage: '');
+    if (formKey.currentState.validate()) {
+      if (actionType == ActionTypes.add) {
+        EmployeeModel employeeModel = EmployeeModel(
+            id: Random.secure().nextInt(9999).toString(),
+            employeeName: name,
+            employeeAge: age,
+            employeeSalary: salary,
+            rating: 0,
+            profileImage: '');
 
-      await internalDatabase.insertEmployee(employeeModel);
-    } else if (actionType == ActionTypes.edit) {
-      await internalDatabase.updateEmployee(selectedEmployee.id, name, salary,
-          age, selectedEmployee.profileImage);
+        await internalDatabase.insertEmployee(employeeModel);
+      } else if (actionType == ActionTypes.edit) {
+        await internalDatabase.updateEmployee(selectedEmployee.id, name, salary,
+            age, selectedEmployee.profileImage);
+      }
+      await _loadEmployeeList();
+      routes.goBack(context);
     }
-    _loadEmployeeList();
   }
 
-  void deleteEmployee() async {
+  void deleteEmployee(BuildContext context) async {
     internalDatabase.deleteEmployee(selectedEmployee.id);
-    _loadEmployeeList();
+    await _loadEmployeeList();
+    routes.goBack(context);
   }
 
-  String validateName(value){
-
-    logger.d("sfsf "+value);
+  String validateName(value) {
+    logger.d("sfsf " + value);
     if (value.isEmpty) {
       return 'Please enter some text';
     }
     return null;
   }
 
-  String validateAge(value){
+  String validateAge(value) {
     if (value.isEmpty) {
       return 'Please enter some text';
     }
     return null;
   }
 
-  String validateSalary(value){
+  String validateSalary(value) {
     if (value.isEmpty) {
       return 'Please enter some text';
     }
     return null;
   }
-
-
-
-
-
-
 
   void imageSelectFromGallery() async {
     final galleryImage = await ImagePicker.pickImage(
@@ -161,6 +150,5 @@ class EmployeeProvider extends ChangeNotifier {
         iosUiSettings: IOSUiSettings(
           minimumAspectRatio: 1.0,
         ));
-
   }
 }

@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:scopedmodeltest/models/employeeModel.dart';
 import 'package:scopedmodeltest/providers/employeeProvider.dart';
 import 'package:scopedmodeltest/utilities/enums.dart';
-import 'package:scopedmodeltest/utilities/routes.dart';
-import 'package:scopedmodeltest/utilities/utils.dart';
 
 class EmployeeEditPage extends StatelessWidget {
   final action;
-
   final _nameController = TextEditingController();
   final _ageController = TextEditingController();
   final _salaryController = TextEditingController();
@@ -27,9 +23,8 @@ class EmployeeEditPage extends StatelessWidget {
           ),
           backgroundColor: Colors.green,
           onPressed: () {
-            employeeProvider.addOrUpdateEmployee(action, _nameController.text,
+            employeeProvider.addOrUpdateEmployee(context,action, _nameController.text,
                 _ageController.text, _salaryController.text);
-            routes.goBack(context);
           },
         );
       }),
@@ -42,8 +37,8 @@ class EmployeeEditPage extends StatelessWidget {
                     return IconButton(
                       icon: Icon(Icons.delete),
                       onPressed: () {
-                        employeeProvider.deleteEmployee();
-                        routes.goBack(context);
+                        employeeProvider.deleteEmployee(context);
+
                       },
                     );
                   },
@@ -81,6 +76,8 @@ class EmployeeEditPage extends StatelessWidget {
               }
 
               return Form(
+                key: employeeProvider.formKey,
+                autovalidate: true,
                 child: Column(
                   children: <Widget>[
                     SizedBox(
@@ -116,35 +113,32 @@ class EmployeeEditPage extends StatelessWidget {
     );
   }
 
-  TextFormField _textField(String labelText, TextEditingController controller,Function validator) {
-    return TextFormField(
-      validator: (value){
-        logger.d("sfsf "+value);
-        if (value.isEmpty) {
-          return 'Please enter some text';
-        }
-        return null;
-      },
-      controller: controller,
-      decoration: InputDecoration(
-        labelStyle:
-            TextStyle(fontSize: 16.0, color: Colors.black.withOpacity(.60)),
-        focusedBorder: OutlineInputBorder(
+  Widget _textField(String labelText, TextEditingController controller,Function validator) {
+    return Container(
+      margin: EdgeInsets.only(left: 16,right: 16,bottom: 16),
+      child: TextFormField(
+        validator: validator,
+        controller: controller,
+        decoration: InputDecoration(
+          labelStyle:
+              TextStyle(fontSize: 16.0, color: Colors.black.withOpacity(.60)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: const BorderSide(
+                color: Colors.black,
+                width: 2.0,
+              ),
+              borderRadius: BorderRadius.circular(4.0)),
+          border: OutlineInputBorder(
             borderSide: const BorderSide(
-              color: Colors.black,
-              width: 2.0,
+              color: Colors.orange,
+              width: 10.0,
             ),
-            borderRadius: BorderRadius.circular(4.0)),
-        border: OutlineInputBorder(
-          borderSide: const BorderSide(
-            color: Colors.orange,
-            width: 10.0,
+            borderRadius: BorderRadius.circular(4.0),
           ),
-          borderRadius: BorderRadius.circular(4.0),
+          labelText: labelText,
+          fillColor: Color(0xffDEDEDE),
+          hintStyle: TextStyle(color: Colors.black.withOpacity(.60)),
         ),
-        labelText: labelText,
-        fillColor: Color(0xffDEDEDE),
-        hintStyle: TextStyle(color: Colors.black.withOpacity(.60)),
       ),
     );
   }

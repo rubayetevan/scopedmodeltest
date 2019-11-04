@@ -76,7 +76,14 @@ class EmployeeProvider extends ChangeNotifier {
 
   void addOrUpdateEmployee(BuildContext context,
       actionType, String name, String age, String salary) async {
+
+
     if (formKey.currentState.validate()) {
+
+
+
+
+
       if (actionType == ActionTypes.add) {
         EmployeeModel employeeModel = EmployeeModel(
             id: Random.secure().nextInt(9999).toString(),
@@ -93,6 +100,11 @@ class EmployeeProvider extends ChangeNotifier {
       }
       await _loadEmployeeList();
       routes.goBack(context);
+
+
+
+
+
     }
   }
 
@@ -102,7 +114,7 @@ class EmployeeProvider extends ChangeNotifier {
     routes.goBack(context);
   }
 
-  String validateName(value) {
+  String validateName(String value) {
     logger.d("sfsf " + value);
     if (value.isEmpty) {
       return 'Please enter some text';
@@ -110,14 +122,14 @@ class EmployeeProvider extends ChangeNotifier {
     return null;
   }
 
-  String validateAge(value) {
+  String validateAge(String value) {
     if (value.isEmpty) {
       return 'Please enter some text';
     }
     return null;
   }
 
-  String validateSalary(value) {
+  String validateSalary(String value) {
     if (value.isEmpty) {
       return 'Please enter some text';
     }

@@ -23,8 +23,12 @@ class EmployeeEditPage extends StatelessWidget {
           ),
           backgroundColor: Colors.green,
           onPressed: () {
-            employeeProvider.addOrUpdateEmployee(context,action, _nameController.text,
-                _ageController.text, _salaryController.text);
+            employeeProvider.addOrUpdateEmployee(
+                context,
+                action,
+                _nameController.text,
+                _ageController.text,
+                _salaryController.text);
           },
         );
       }),
@@ -38,7 +42,6 @@ class EmployeeEditPage extends StatelessWidget {
                       icon: Icon(Icons.delete),
                       onPressed: () {
                         employeeProvider.deleteEmployee(context);
-
                       },
                     );
                   },
@@ -100,9 +103,12 @@ class EmployeeEditPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    _textField('Name', _nameController,employeeProvider.validateName),
-                    _textField('Age', _ageController,employeeProvider.validateAge),
-                    _textField('Salary', _salaryController,employeeProvider.validateSalary),
+                    _textField(
+                        'Name', _nameController, employeeProvider.validateName),
+                    _textField(
+                        'Age', _ageController, employeeProvider.validateAge),
+                    _textField('Salary', _salaryController,
+                        employeeProvider.validateSalary),
                   ],
                 ),
               );
@@ -113,9 +119,10 @@ class EmployeeEditPage extends StatelessWidget {
     );
   }
 
-  Widget _textField(String labelText, TextEditingController controller,Function validator) {
+  Widget _textField(
+      String labelText, TextEditingController controller, Function validator) {
     return Container(
-      margin: EdgeInsets.only(left: 16,right: 16,bottom: 16),
+      margin: EdgeInsets.only(left: 16, right: 16, bottom: 16),
       child: TextFormField(
         validator: validator,
         controller: controller,
